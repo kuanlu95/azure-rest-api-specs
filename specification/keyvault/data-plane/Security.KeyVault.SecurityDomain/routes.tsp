@@ -7,7 +7,7 @@ using TypeSpec.Http;
 
 namespace KeyVault;
 
-interface HSMSecurityDomainOperations {
+interface HsmSecurityDomainOperations {
   /**
    * Retrieves the Security Domain download operation status
    */
