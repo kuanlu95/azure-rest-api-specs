@@ -7,20 +7,33 @@ using TypeSpec.Http;
 namespace KeyVault;
 
 /**
- * operation status
+ * Operation status.
  */
-enum OperationStatus {
-  Success,
-  InProgress,
-  Failed,
+union OperationStatus {
+  string,
+
+  /** The operation succeeded. */
+  Success: "Success",
+
+  /** The operation is in progress. */
+  InProgress: "InProgress",
+
+  /** The operation failed. */
+  Failed: "Failed",
 }
 
+/**
+ * The Security Domain operation status.
+ */
 model SecurityDomainOperationStatus {
   /**
-   * operation status
+   * Operation status.
    */
   status?: OperationStatus;
 
+  /**
+   * Details of the operation status.
+   */
   @encodedName("application/json", "status_details")
   statusDetails?: string;
 }
@@ -61,21 +74,27 @@ model Error {
   innerError?: Error;
 }
 
+/**
+ * The Security Domain download operation requires customer to provide N certificates (minimum 3 and maximum 10)
+ * containing a public key in JWK format.
+ */
 model CertificateInfoObject {
   /**
-   * Certificates needed from customer
+   * Certificates needed from customer.
    */
   certificates: SecurityDomainJsonWebKey[];
 
   /**
-   * Customer to specify the number of certificates (minimum 2 and maximum 10) to
-   * restore Security Domain
+   * Customer to specify the number of certificates (minimum 2 and maximum 10) to restore Security Domain.
    */
   @maxValue(10)
-  @minValue(2)
+  @minValue(2) // TODO: resolve whether this minimum should be 2 or 3 (see class description vs. property description)
   required?: int32 = 2;
 }
 
+/**
+ * A JSON Web Key (JWK) for use in a security domain operation.
+ */
 model SecurityDomainJsonWebKey {
   /**
    * Key identifier.
@@ -89,6 +108,9 @@ model SecurityDomainJsonWebKey {
    */
   kty: string;
 
+  /**
+   * Set of permitted key operations for the key.
+   */
   @encodedName("application/json", "key_ops")
   keyOps: string[];
 
@@ -103,7 +125,7 @@ model SecurityDomainJsonWebKey {
   e: string;
 
   /**
-   * X509 certificate chain parameter
+   * X509 certificate chain parameter.
    */
   @encodedName("application/json", "x5c")
   x5C: string[];
@@ -123,7 +145,7 @@ model SecurityDomainJsonWebKey {
    * X509 certificate SHA256 thumbprint.
    */
   @encodedName("application/json", "x5t#S256")
-  x5TS256: string;
+  x5tS256: string;
 
   /**
    * Algorithm intended for use with the key.
@@ -141,18 +163,21 @@ model SecurityDomainObject {
   value: string;
 }
 
+/**
+ * Security Domain transfer key.
+ */
 model TransferKey {
   /**
-   * Specifies the format of the transfer key
+   * Specifies the format of the transfer key.
    */
   @encodedName("application/json", "key_format")
   keyFormat?: string = "jwk";
 
   /**
-   * Specifies the transfer key in JWK format
+   * Specifies the transfer key in JWK format.
    */
   @encodedName("application/json", "transfer_key")
-  transferKey: SecurityDomainJsonWebKey;
+  transferKeyJwk: SecurityDomainJsonWebKey;
 }
 
 /**
@@ -168,23 +193,27 @@ model Attributes {
    * Not before date in UTC.
    */
   @encodedName("application/json", "nbf")
-  notBefore?: plainTime;
+  @encode("unixTimestamp", int32)
+  notBefore?: utcDateTime;
 
   /**
    * Expiry date in UTC.
    */
   @encodedName("application/json", "exp")
-  expires?: plainTime;
+  @encode("unixTimestamp", int32)
+  expires?: utcDateTime;
 
   /**
    * Creation time in UTC.
    */
   @visibility("read")
-  created?: plainTime;
+  @encode("unixTimestamp", int32)
+  created?: utcDateTime;
 
   /**
    * Last updated time in UTC.
    */
   @visibility("read")
-  updated?: plainTime;
+  @encode("unixTimestamp", int32)
+  updated?: utcDateTime;
 }
