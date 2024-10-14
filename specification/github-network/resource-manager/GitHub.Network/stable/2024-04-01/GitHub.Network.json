@@ -85,7 +85,7 @@
     },
     "/subscriptions/{subscriptionId}/providers/GitHub.Network/networkSettings": {
       "get": {
-        "operationId": "networkSettings_ListBySubscription",
+        "operationId": "NetworkSettings_ListBySubscription",
         "tags": [
           "NetworkSettingsResources"
         ],
@@ -112,11 +112,6 @@
             }
           }
         },
-        "x-ms-examples": {
-          "networkSettingsListBySub": {
-            "$ref": "./examples/networkSettings_ListBySubscription.json"
-          }
-        },
         "x-ms-pageable": {
           "nextLinkName": "nextLink"
         }
@@ -124,7 +119,7 @@
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/GitHub.Network/networkSettings": {
       "get": {
-        "operationId": "networkSettings_ListByResourceGroup",
+        "operationId": "NetworkSettings_ListByResourceGroup",
         "tags": [
           "NetworkSettingsResources"
         ],
@@ -154,11 +149,6 @@
             }
           }
         },
-        "x-ms-examples": {
-          "networkSettingsListGet": {
-            "$ref": "./examples/networkSettings_ListByResourceGroup.json"
-          }
-        },
         "x-ms-pageable": {
           "nextLinkName": "nextLink"
         }
@@ -166,7 +156,7 @@
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/GitHub.Network/networkSettings/{networkSettingsName}": {
       "get": {
-        "operationId": "networkSettings_Get",
+        "operationId": "NetworkSettings_Get",
         "tags": [
           "NetworkSettingsResources"
         ],
@@ -203,15 +193,10 @@
               "$ref": "../../../../../common-types/resource-management/v5/types.json#/definitions/ErrorResponse"
             }
           }
-        },
-        "x-ms-examples": {
-          "networkSettingsGet": {
-            "$ref": "./examples/networkSettings_Get.json"
-          }
         }
       },
       "put": {
-        "operationId": "networkSettings_Create",
+        "operationId": "NetworkSettings_Create",
         "tags": [
           "NetworkSettingsResources"
         ],
@@ -241,8 +226,7 @@
             "required": true,
             "schema": {
               "$ref": "#/definitions/NetworkSettingsResource"
-            },
-            "x-ms-client-name": "resource"
+            }
           }
         ],
         "responses": {
@@ -264,15 +248,10 @@
               "$ref": "../../../../../common-types/resource-management/v5/types.json#/definitions/ErrorResponse"
             }
           }
-        },
-        "x-ms-examples": {
-          "networkSettingsCreate": {
-            "$ref": "./examples/networkSettings_Create.json"
-          }
         }
       },
       "patch": {
-        "operationId": "networkSettings_Update",
+        "operationId": "NetworkSettings_Update",
         "tags": [
           "NetworkSettingsResources"
         ],
@@ -296,14 +275,13 @@
             "pattern": "^[a-zA-Z0-9]"
           },
           {
-            "name": "networkSettings",
+            "name": "properties",
             "in": "body",
             "description": "Parameters for updating the properties of the GitHub.Network resource.",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/NetworkSettingsResourceUpdate"
-            },
-            "x-ms-client-name": "properties"
+              "$ref": "#/definitions/NetworkSettingsResource"
+            }
           }
         ],
         "responses": {
@@ -319,15 +297,10 @@
               "$ref": "../../../../../common-types/resource-management/v5/types.json#/definitions/ErrorResponse"
             }
           }
-        },
-        "x-ms-examples": {
-          "networkSettingsUpdate": {
-            "$ref": "./examples/networkSettings_Update.json"
-          }
         }
       },
       "delete": {
-        "operationId": "networkSettings_Delete",
+        "operationId": "NetworkSettings_Delete",
         "tags": [
           "NetworkSettingsResources"
         ],
@@ -364,11 +337,6 @@
               "$ref": "../../../../../common-types/resource-management/v5/types.json#/definitions/ErrorResponse"
             }
           }
-        },
-        "x-ms-examples": {
-          "networkSettingsDelete": {
-            "$ref": "./examples/networkSettings_Delete.json"
-          }
         }
       }
     }
@@ -378,6 +346,10 @@
       "type": "object",
       "description": "GitHub.Network networkSettings resource. Represents the network settings needed for vnet injection.",
       "properties": {
+        "properties": {
+          "$ref": "#/definitions/NetworkSettingsResourceProperties",
+          "description": "The resource-specific properties for this resource."
+        },
         "identity": {
           "$ref": "../../../../../common-types/resource-management/v5/managedidentity.json#/definitions/ManagedServiceIdentity",
           "description": "The managed service identities assigned to this resource."
@@ -385,24 +357,7 @@
       },
       "allOf": [
         {
-          "type": "object",
-          "description": "Concrete tracked resource types can be created by aliasing this type using a specific property type.",
-          "properties": {
-            "properties": {
-              "$ref": "#/definitions/NetworkSettingsResourceProperties",
-              "description": "The resource-specific properties for this resource.",
-              "x-ms-client-flatten": true,
-              "x-ms-mutability": [
-                "read",
-                "create"
-              ]
-            }
-          },
-          "allOf": [
-            {
-              "$ref": "../../../../../common-types/resource-management/v5/types.json#/definitions/TrackedResource"
-            }
-          ]
+          "$ref": "../../../../../common-types/resource-management/v5/types.json#/definitions/TrackedResource"
         }
       ]
     },
@@ -454,23 +409,6 @@
         }
       }
     },
-    "NetworkSettingsResourceUpdate": {
-      "type": "object",
-      "description": "The type used for update operations of the NetworkSettingsResource.",
-      "properties": {
-        "identity": {
-          "$ref": "../../../../../common-types/resource-management/v5/managedidentity.json#/definitions/ManagedServiceIdentity",
-          "description": "The managed service identities assigned to this resource."
-        },
-        "tags": {
-          "type": "object",
-          "description": "Resource tags.",
-          "additionalProperties": {
-            "type": "string"
-          }
-        }
-      }
-    },
     "ProvisioningState": {
       "type": "string",
       "description": "Provisioning status of the managed application.",
@@ -507,36 +445,6 @@
         ]
       },
       "readOnly": true
-    },
-    "Versions": {
-      "type": "string",
-      "description": "The available API versions.",
-      "enum": [
-        "2024-04-01-preview",
-        "2024-04-01",
-        "2024-04-02"
-      ],
-      "x-ms-enum": {
-        "name": "Versions",
-        "modelAsString": true,
-        "values": [
-          {
-            "name": "2024-04-01-preview",
-            "value": "2024-04-01-preview",
-            "description": "The 2024-04-01-preview API version for staging environment."
-          },
-          {
-            "name": "2024-04-01",
-            "value": "2024-04-01",
-            "description": "The 2024-04-01 API version for staff US environment."
-          },
-          {
-            "name": "2024-04-02",
-            "value": "2024-04-02",
-            "description": "The 2024-04-02 API version for production US/EU environments."
-          }
-        ]
-      }
     }
   },
   "parameters": {}

@@ -1,5 +1,6 @@
 import "@azure-tools/typespec-azure-core";
 import "@azure-tools/typespec-azure-resource-manager";
+import "@azure-tools/typespec-client-generator-core";
 import "@typespec/openapi";
 import "@typespec/rest";
 import "./models.tsp";
@@ -33,12 +34,10 @@ interface NetworkSettingsResources {
   get is ArmResourceRead<NetworkSettingsResource>;
 
   @doc("Creates a GitHub.Network networkSettings resource with the specified create parameters.")
-  @encodedName("application/json", "networkSettings")
   create is ArmResourceCreateOrReplaceSync<NetworkSettingsResource>;
 
   @doc("Updates the properties of an existing GitHub.Network networkSettings resource with the specified update parameters.")
-  @parameterVisibility("read")
-  @encodedName("application/json", "networkSettings")
+  @parameterVisibility
   update is ArmResourcePatchSync<
     NetworkSettingsResource,
     NetworkSettingsResourceProperties
@@ -60,4 +59,12 @@ interface NetworkSettingsResources {
 
 @@doc(NetworkSettingsResources.update::parameters.properties,
   "Parameters for updating the properties of the GitHub.Network resource."
+);
+
+@@Azure.ClientGenerator.Core.clientName(NetworkSettingsResources.create::parameters.resource,
+  "networkSettings"
+);
+
+@@Azure.ClientGenerator.Core.clientName(NetworkSettingsResources,
+  "networkSettings"
 );
