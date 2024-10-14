@@ -4,10 +4,11 @@ import "./models.tsp";
 
 using TypeSpec.Rest;
 using TypeSpec.Http;
+using Azure.Core;
 
 namespace KeyVault;
 
-interface HsmSecurityDomainOperations {
+interface HsmSecurityDomain {
   /**
    * Retrieves the Security Domain download operation status
    */
@@ -22,11 +23,39 @@ interface HsmSecurityDomainOperations {
    * Retrieves the Security Domain from the managed HSM. Calling this endpoint can
    * be used to activate a provisioned managed HSM resource.
    */
+  @pollingOperation(HsmSecurityDomain.downloadPending)
   @route("/securitydomain/download")
   @post
-  download is Azure.Core.Foundations.Operation<
-    CertificateInfoObject,
-    SecurityDomainObject
+  download is Azure.Core.Foundations.LongRunningOperation<
+    {
+      /**
+       * The Security Domain download operation requires customer to provide N certificates (minimum 3 and maximum 10)
+       * containing a public key in JWK format.
+       */
+      @body
+      certificateInfoObject: CertificateInfoObject;
+    },
+    {
+      @statusCode _: 202;
+
+      /**
+       * The URI to poll for completion status.
+       */
+      @pollingLocation
+      @header("Azure-AsyncOperation")
+      azureAsyncOperation?: string;
+
+      /**
+       * The recommended number of seconds to wait before calling the URI specified in
+       * Azure-AsyncOperation.
+       */
+      @header("Retry-After") retryAfter?: int32;
+
+      /**
+       * The response contains the Security Domain that is being confirmed.
+       */
+      @body response: SecurityDomainObject;
+    }
   >;
 
   /**

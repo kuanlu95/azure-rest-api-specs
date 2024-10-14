@@ -1,6 +1,8 @@
+import "@azure-tools/typespec-azure-core";
 import "@typespec/rest";
 import "@typespec/http";
 
+using Azure.Core;
 using TypeSpec.Rest;
 using TypeSpec.Http;
 
@@ -9,11 +11,12 @@ namespace KeyVault;
 /**
  * Operation status.
  */
+@lroStatus
 union OperationStatus {
   string,
 
   /** The operation succeeded. */
-  Success: "Success",
+  Succeeded: "Success", // TODO: resolve whether this should be "Succeeded" or "Success"
 
   /** The operation is in progress. */
   InProgress: "InProgress",
